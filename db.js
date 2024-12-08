@@ -1,9 +1,9 @@
 const { Sequelize } = require("sequelize");
 
-// Create a new Sequelize instance
-const sequelize = new Sequelize("database_name", "username", "password", {
+const sequelize = new Sequelize("car-sharing", "postgres", "postgres", {
   host: "localhost",
-  dialect: "postgres", // Choose 'postgres' as the dialect
+  dialect: "postgres",
+  // sync: { force: true },
 });
 
 const connectDB = async () => {
