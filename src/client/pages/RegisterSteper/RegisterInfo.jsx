@@ -7,6 +7,7 @@ import { useToast } from "../../../shared/toast";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setIsLoggedIn } from "../../../client/model/authSlice";
+import { useRegisterMutation } from "../../api/authApi";
 
 const infoSchema = yup.object({
   name: yup.string().min(3).max(255).required(),
@@ -19,6 +20,8 @@ export const RegisterInfo = () => {
 
   const email = useSelector((state) => state.clientAuth.email);
   const { openToast } = useToast();
+
+  const [registerClient] = useRegisterMutation();
 
   const {
     register,
@@ -44,9 +47,27 @@ export const RegisterInfo = () => {
   const onSubmit = ({ name, password }) => {
     if (!name || !password || !email) return;
 
-    dispatch(setIsLoggedIn(true));
-
-    navigate("/client");
+    registerClient({
+      email,
+      name,
+      password,
+    })
+      .unwrap()
+      .then(({ accessToken }) => {
+        localStorage.setItem("accessToken", accessToken);
+        dispatch(setIsLoggedIn(true));
+        navigate("/client");
+        openToast({
+          content: "Registration successful",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        openToast({
+          content: error.message,
+          type: "error",
+        });
+      });
   };
 
   return (

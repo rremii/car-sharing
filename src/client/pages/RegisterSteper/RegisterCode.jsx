@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useToast } from "../../../shared/toast";
+import { useSelector } from "react-redux";
 
 const validatingSchema = yup
   .object({
@@ -18,6 +19,7 @@ const validatingSchema = yup
 export const RegisterCode = () => {
   const navigate = useNavigate();
 
+  const correctCode = useSelector((state) => state.clientAuth.code);
   const { openToast } = useToast();
 
   const {
@@ -39,7 +41,14 @@ export const RegisterCode = () => {
   const onSubmit = ({ code }) => {
     if (!code) return;
 
-    navigate("/client/register/info");
+    if (code === correctCode) {
+      navigate("/client/register/info");
+    } else {
+      openToast({
+        content: "Code is invalid",
+        type: "error",
+      });
+    }
   };
 
   return (

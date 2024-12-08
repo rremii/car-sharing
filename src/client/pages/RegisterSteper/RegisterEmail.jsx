@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { useToast } from "../../../shared/toast";
 import { useDispatch } from "react-redux";
 import { setEmail } from "../../../client/model/authSlice";
+import { useSendCodeMutation } from "../../api/authApi";
+import { setCode } from "../../../client/model/authSlice";
 
 const emailSchema = yup.object({
   email: yup.string().email().required(),
@@ -16,6 +18,8 @@ export const RegisterEmail = () => {
   const navigate = useNavigate();
 
   const { openToast } = useToast();
+
+  const [sendCode] = useSendCodeMutation();
 
   const {
     register,
@@ -36,9 +40,23 @@ export const RegisterEmail = () => {
   const onSubmit = ({ email }) => {
     if (!email) return;
 
-    dispatch(setEmail(email));
-
-    navigate("/client/register/code");
+    sendCode({ email })
+      .unwrap()
+      .then((data) => {
+        dispatch(setEmail(email));
+        dispatch(setCode(data.code));
+        navigate("/client/register/code");
+        openToast({
+          content: "Code was sent",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        openToast({
+          content: error.message,
+          type: "error",
+        });
+      });
   };
 
   const goLogin = () => {

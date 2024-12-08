@@ -12,27 +12,30 @@ import { RegisterCode } from "./client/pages/RegisterSteper/RegisterCode";
 import { RegisterInfo } from "./client/pages/RegisterSteper/RegisterInfo";
 import { WelcomePage } from "./shared/ui/Welcome/WelcomePage";
 import { useClientAuth } from "./client/model/useClientAuth";
+import { ProfilePage } from "./client/pages/ProfilePage/ProfilePage";
+import { useEffect } from "react";
 
 function App() {
-  const { isClientLoggedIn } = useClientAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname === "/") navigate("/welcome");
+  }, [location]);
+
+  useClientAuth();
 
   return (
     <Routes>
-      {isClientLoggedIn ? (
-        <>
-          <Route path="/client/map" element={<MapPage />} />
-          <Route path="/client/car/:id/rent" element={<CreateRentPage />} />
-          <Route path="/client/rent/" element={<RentListPage />} />
-          <Route path="/client/rent/:id" element={<RentPage />} />
-        </>
-      ) : (
-        <>
-          <Route path="/client/login" element={<LoginPage />} />
-          <Route path="/client/register/email" element={<RegisterEmail />} />
-          <Route path="/client/register/code" element={<RegisterCode />} />
-          <Route path="/client/register/info" element={<RegisterInfo />} />
-        </>
-      )}
+      <Route path="/client" element={<MapPage />} />
+      <Route path="/client/car/:id/rent" element={<CreateRentPage />} />
+      <Route path="/client/rent/" element={<RentListPage />} />
+      <Route path="/client/rent/:id" element={<RentPage />} />
+      <Route path="/client/profile" element={<ProfilePage />} />
+      <Route path="/client/login" element={<LoginPage />} />
+      <Route path="/client/register/email" element={<RegisterEmail />} />
+      <Route path="/client/register/code" element={<RegisterCode />} />
+      <Route path="/client/register/info" element={<RegisterInfo />} />
 
       <Route path="/welcome" element={<WelcomePage />} />
 

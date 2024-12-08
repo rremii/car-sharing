@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isLoggedIn: false,
   email: "",
+  code: "",
 };
 
 export const authSlice = createSlice({
@@ -15,7 +16,10 @@ export const authSlice = createSlice({
     setIsLoggedIn: (state, action) => {
       state.isLoggedIn = action.payload;
     },
+    setCode: (state, action) => {
+      state.code = action.payload;
+    },
   },
 });
 
-export const { setEmail, setIsLoggedIn } = authSlice.actions;
+export const { setEmail, setIsLoggedIn, setCode } = authSlice.actions;

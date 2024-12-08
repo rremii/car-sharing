@@ -4,12 +4,14 @@ import { useToast } from "../../../shared/toast";
 import { useDispatch } from "react-redux";
 import { setIsLoggedIn } from "../../../client/model/authSlice";
 import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../../api/authApi";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { openToast } = useToast();
+  const [login] = useLoginMutation();
 
   const {
     register,
@@ -28,9 +30,19 @@ export const LoginPage = () => {
   const onSubmit = ({ email, password }) => {
     if (!email || !password) return;
 
-    dispatch(setIsLoggedIn(true));
-
-    navigate("/client");
+    login({ email, password })
+      .unwrap()
+      .then(({ accessToken }) => {
+        localStorage.setItem("accessToken", accessToken);
+        dispatch(setIsLoggedIn(true));
+        navigate("/client");
+      })
+      .catch((error) => {
+        openToast({
+          content: error.message,
+          type: "error",
+        });
+      });
   };
 
   const goToRegister = () => {
