@@ -1,7 +1,6 @@
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import { useMap } from "react-leaflet";
 
-import "./Map.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
 export const RecenterMap = ({ lat, lng }) => {
   const map = useMap();

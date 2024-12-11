@@ -41,6 +41,13 @@ export const clientApiInstance = axios.create({
 clientApiInstance.interceptors.request.use(withTokenInterceptor);
 clientApiInstance.interceptors.response.use(undefined, authRejectInterceptor);
 
+export const companyApiInstance = axios.create({
+  withCredentials: false,
+  baseURL: "http://localhost:3000/",
+});
+companyApiInstance.interceptors.request.use(withTokenInterceptor);
+companyApiInstance.interceptors.response.use(undefined, authRejectInterceptor);
+
 export const clientApi = createApi({
   reducerPath: "clientApi",
   baseQuery: createAxiosBaseQuery(clientApiInstance, "client"),
@@ -49,6 +56,6 @@ export const clientApi = createApi({
 
 export const companyApi = createApi({
   reducerPath: "companyApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/company" }),
+  baseQuery: createAxiosBaseQuery(companyApiInstance, "company"),
   endpoints: () => ({}),
 });

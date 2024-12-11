@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 
 import "./Map.css";
 import { useEffect, useState } from "react";
-import { RecenterMap } from "./RecenterMap";
+import { RecenterMap } from "../../../shared/ui/RecenterMap";
 import { useNavigate } from "react-router-dom";
 
 export const Map = () => {
