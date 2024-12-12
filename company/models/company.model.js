@@ -1,16 +1,19 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("./../../db");
+const sequelize = require("../../db");
 
-const Review = require("./review.model");
-const Rental = require("./rental.model");
+const Car = require("./car.model");
 
-const Client = sequelize.define("Client", {
+const Company = sequelize.define("Company", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
   name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  about: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -28,10 +31,7 @@ const Client = sequelize.define("Client", {
   },
 });
 
-Client.hasMany(Review);
-Review.belongsTo(Client, { through: "clientId" });
+Company.hasMany(Car);
+Car.belongsTo(Company, { through: "companyId" });
 
-Client.hasMany(Rental);
-Rental.belongsTo(Client, { through: "clientId" });
-
-module.exports = Client;
+module.exports = Company;

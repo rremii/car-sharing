@@ -6,10 +6,9 @@ const ExtractJwt = require("passport-jwt").ExtractJwt;
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const sequelize = require("./db");
-const router = require("./client/routes");
+const clientRouter = require("./client/routes");
+const companyRouter = require("./company/routes");
 const errorMiddleware = require("./error-middleware");
-const { secretKey } = require("./constants");
-const Client = require("./client/models/client.model");
 const cors = require("cors");
 
 const app = express();
@@ -22,7 +21,8 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(passport.initialize());
-app.use("/client", router);
+app.use("/client", clientRouter);
+app.use("/company", companyRouter);
 app.use(errorMiddleware);
 
 const opts = {
@@ -32,10 +32,10 @@ const opts = {
 
 passport.use(
   new JwtStrategy(opts, async (jwtPayload, done) => {
+    console.log(jwtPayload);
     const user = {
       id: jwtPayload.id,
       email: jwtPayload.email,
-      name: jwtPayload.name,
     };
 
     if (user) {

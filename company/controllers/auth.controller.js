@@ -3,12 +3,13 @@ const authService = require("../services/auth.service");
 class AuthController {
   async register(req, res, next) {
     try {
-      const { email, password, name } = req.body;
+      const { email, password, name, about } = req.body;
 
       const { accessToken } = await authService.register({
         email,
         password,
         name,
+        about,
       });
 
       res.status(200).send({ accessToken });
