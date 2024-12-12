@@ -1,62 +1,72 @@
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect } from "react";
 import { useToast } from "../../../shared/toast";
+import { useCreateCarMutation } from "../../../company/api/carApi";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const brands = ["Audi", "BMW", "Mercedes", "Volvo"];
-const brandsRegex = new RegExp(brands.join("|"));
-
-const InfoSchema = yup.object({
-  brand: yup.string().matches(brandsRegex).required(),
-  model: yup.string().required(),
-});
+const brandsWithModels = {
+  Audi: ["A3", "A4", "A5", "A6", "Q5", "Q7", "S4", "S5", "S6", "S8", "TT"],
+  BMW: ["3-series", "5-series", "6-series", "7-series", "8-series"],
+  Mercedes: ["C-class", "E-class", "S-class", "SL-class"],
+  Volvo: ["XC90", "XC70", "XC40", "XC30", "V70", "V50", "V40", "V30"],
+};
+const brands = Object.keys(brandsWithModels);
 
 export const InfoStep = ({ goBack, location }) => {
   const { openToast } = useToast();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(InfoSchema),
-  });
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (errors.brand) {
-      openToast({
-        content: errors.brand.message,
-        type: "error",
-      });
-    }
-    if (errors.model) {
-      openToast({
-        content: errors.model.message,
-        type: "error",
-      });
-    }
-  }, [errors]);
+  const [chosenBrand, setChosenBrand] = useState(brands[0]);
+  const [chosenModel, setChosenModel] = useState(
+    brandsWithModels[chosenBrand][0]
+  );
 
-  const onSubmit = ({ brand, model }) => {
-    if (!brand || !model) return;
+  const [createCar] = useCreateCarMutation();
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (!chosenBrand || !chosenModel || !location) return;
+
+    createCar({ brand: chosenBrand, model: chosenModel, ...location })
+      .unwrap()
+      .then(() => {
+        navigate("/company");
+        openToast({
+          content: "Car created",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        openToast({
+          content: error.message,
+          type: "error",
+        });
+      });
   };
 
   return (
     <div>
       <h2>Info</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <div>
           <button onClick={goBack}>Go back</button>
         </div>
 
         <label>Brand</label>
-        <select {...register("brand")}>
+        <select onChange={(e) => setChosenBrand(e.target.value)}>
           {brands.map((brand) => (
             <option key={brand}>{brand}</option>
           ))}
         </select>
         <label>Model</label>
-        <input type="text" {...register("model")} />
+        <select
+          value={chosenModel}
+          onChange={(e) => setChosenModel(e.target.value)}
+        >
+          {brandsWithModels[chosenBrand].map((model) => (
+            <option key={model}>{model}</option>
+          ))}
+        </select>
+
         <button type="submit">create</button>
       </form>
     </div>

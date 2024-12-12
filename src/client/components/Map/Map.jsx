@@ -5,8 +5,12 @@ import { useEffect, useState } from "react";
 import { RecenterMap } from "../../../shared/ui/RecenterMap";
 import { useNavigate } from "react-router-dom";
 
+import { useGetAllCarsQuery } from "../../api/carApi";
+
 export const Map = () => {
   const navigate = useNavigate();
+
+  const { data: cars } = useGetAllCarsQuery();
 
   const [location, setLocation] = useState({
     lat: 0,
@@ -26,17 +30,7 @@ export const Map = () => {
     navigate("/client/car/" + carId + "/rent");
   };
 
-  const cars = [
-    {
-      brand: "qwe",
-      model: "qwe",
-      id: 0,
-      lat: location.lat,
-      lng: location.lng,
-      companyId: 0,
-    },
-  ];
-
+  console.log(location);
   return (
     <div className="map">
       <MapContainer zoomControl={false} center={location} zoom={13}>
