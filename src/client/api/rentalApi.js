@@ -12,9 +12,9 @@ const rentalApi = clientApi.injectEndpoints({
     finishRental: builder.mutation({
       query: ({ id }) => ({
         url: `/me/rentals/${id}/finish`,
-        method: "PUT",
+        method: "PATCH",
       }),
-      invalidatesTags: ["Rental"],
+      invalidatesTags: ["Rental", "Cars"],
     }),
     createRental: builder.mutation({
       query: (rental) => ({
@@ -22,7 +22,22 @@ const rentalApi = clientApi.injectEndpoints({
         method: "POST",
         body: rental,
       }),
-      invalidatesTags: ["Rental"],
+      invalidatesTags: ["Rental", "Cars"],
+    }),
+
+    removeRental: builder.mutation({
+      query: ({ id }) => ({
+        url: `/me/rentals/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Rental", "Cars"],
+    }),
+    getRentById: builder.query({
+      query: (id) => ({
+        url: `/rentals/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Rental"],
     }),
   }),
 });
@@ -31,4 +46,6 @@ export const {
   useGetMyRentalsQuery,
   useFinishRentalMutation,
   useCreateRentalMutation,
+  useGetRentByIdQuery,
+  useRemoveRentalMutation,
 } = rentalApi;

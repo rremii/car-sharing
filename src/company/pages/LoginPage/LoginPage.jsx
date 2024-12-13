@@ -51,6 +51,7 @@ export const LoginPage = () => {
 
   return (
     <div>
+      <h3 onClick={() => navigate("/welcome")}>Go to welcome</h3>
       <h2>Login</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>Email</label>

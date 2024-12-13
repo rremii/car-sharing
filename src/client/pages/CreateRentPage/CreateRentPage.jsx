@@ -50,7 +50,6 @@ const validatingSchema = yup
 export const CreateRentPage = () => {
   const { id: carId } = useParams();
   const navigate = useNavigate();
-  const [cardNumber, setCardNumber] = useState("");
 
   const { data: car } = useGetCarByIdQuery(carId);
 
@@ -117,6 +116,7 @@ export const CreateRentPage = () => {
 
     reset();
   };
+
   return (
     <>
       <Header />
@@ -125,6 +125,9 @@ export const CreateRentPage = () => {
           <label htmlFor="time">Time:</label>
           <input required type="number" {...register("time")} />
         </div>
+
+        <h3>Prepayment info</h3>
+
         <div style={{ display: "flex" }}>
           <label htmlFor="cardNumber">Card number:</label>
           <input
@@ -139,6 +142,11 @@ export const CreateRentPage = () => {
         <div>
           <label htmlFor="year">Year:</label>
           <input required type="number" {...register("year")} />
+        </div>
+
+        <div>
+          <h3>Cost</h3>
+          <span>{cost}</span>
         </div>
         <button type="submit">submit</button>
       </form>

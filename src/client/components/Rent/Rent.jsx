@@ -5,15 +5,32 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useToast } from "../../../shared/toast";
 import { Review } from "./../../../shared/Review/Review";
+import { useParams } from "react-router-dom";
+import { useGetRentByIdQuery } from "../../api/rentalApi";
+import { useGetMeQuery } from "../../api/meApi";
+import { useFinishRentalMutation } from "../../api/rentalApi";
+import { useRemoveRentalMutation } from "../../api/rentalApi";
+import { useNavigate } from "react-router-dom";
+import { useGetCarReviewsQuery } from "../../api/reviewApi";
+import { useCreateReviewMutation } from "../../api/reviewApi";
 
 const validatingSchema = yup
   .object({
-    review: yup.string().min(3).max(255).required(),
+    comment: yup.string().min(3).max(255).required(),
   })
   .required();
 
 export const Rent = () => {
+  const { id: rentId } = useParams();
+  const navigate = useNavigate();
+  const { data: me } = useGetMeQuery();
   const { openToast } = useToast();
+
+  const { data: rent } = useGetRentByIdQuery(+rentId);
+  const { data: reviews } = useGetCarReviewsQuery(
+    { carId: rent?.carId },
+    { skip: !rent?.carId }
+  );
 
   const {
     reset,
@@ -22,10 +39,25 @@ export const Rent = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      review: "",
+      comment: "",
     },
     resolver: yupResolver(validatingSchema),
   });
+
+  const [finishRental] = useFinishRentalMutation();
+  const [removeRental] = useRemoveRentalMutation();
+  const [createReviewMutation] = useCreateReviewMutation();
+
+  const onFinish = () => {
+    finishRental({ id: rent.id })
+      .unwrap()
+      .catch((error) => {
+        openToast({
+          content: error.message,
+          type: "error",
+        });
+      });
+  };
 
   useEffect(() => {
     if (errors.review)
@@ -35,61 +67,75 @@ export const Rent = () => {
       });
   }, [errors, openToast]);
 
-  const onSubmit = ({ review }) => {
-    console.log(review);
+  const onDelete = () => {
+    removeRental({ id: rent.id })
+      .unwrap()
+      .then(() => {
+        navigate("/client/rent");
+        openToast({ content: "Rental deleted", type: "success" });
+      })
+      .catch((error) => {
+        openToast({
+          content: error.message,
+          type: "error",
+        });
+      });
   };
 
-  const reviews = [
-    {
-      id: 0,
-      comment: "coool one",
-      carId: 0,
-      clientId: 0,
-    },
-  ];
-
-  const rent = {
-    id: 0,
-    carId: 0,
-    clientId: 0,
-    cost: 20,
-    createdAt: new Date(),
-    status: "finished",
-    time: 4,
+  const createReview = ({ comment }) => {
+    createReviewMutation({ carId: rent.carId, comment })
+      .unwrap()
+      .then(() => {
+        openToast({ content: "Review created", type: "success" });
+      })
+      .catch((error) => {
+        openToast({
+          content: error.message,
+          type: "error",
+        });
+      });
+    reset();
   };
 
   return (
     <RentContainer>
-      <span>rent number</span>
-      <span>{rent.id}</span>
-
-      <span>time</span>
-      <span>{rent.time}</span>
-
-      <span>cost</span>
-      <span>{rent.cost}</span>
-
-      <span>status</span>
-      <span>{rent.status}</span>
-
-      {rent.status === "active" && <button>finish</button>}
-
-      {reviews?.map((review) => {
-        return (
-          <Review
-            key={review.id}
-            withDelete={true}
-            comment={review.comment}
-            onDelete={() => {}}
-          />
-        );
-      })}
-
-      {rent.status === "finished" && (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <textarea {...register("review")} />
-          <button type="submit">send</button>
-        </form>
+      {rent ? (
+        <>
+          <h3>rent</h3>
+          <span>rent id</span>
+          <span>{rent.id}</span>
+          <span>time</span>
+          <span>{rent.time}</span>
+          <span>cost</span>
+          <span>{rent.cost}</span>
+          <span>status</span>
+          <span>{rent.status}</span>
+          {rent.status === "active" && (
+            <button onClick={onFinish}>finish</button>
+          )}{" "}
+          {rent.status === "finished" && (
+            <button onClick={onDelete}>delete</button>
+          )}
+          <h3>reviews</h3>
+          {reviews?.map((review) => {
+            return (
+              <Review
+                key={review.id}
+                id={review.id}
+                withDelete={review.clientId === me?.id}
+                comment={review.comment}
+              />
+            );
+          })}
+          {rent.status === "finished" && (
+            <form onSubmit={handleSubmit(createReview)}>
+              <textarea {...register("comment")} />
+              <button type="submit">send</button>
+            </form>
+          )}
+        </>
+      ) : (
+        <div>loading...</div>
       )}
     </RentContainer>
   );

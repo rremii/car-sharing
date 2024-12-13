@@ -52,10 +52,12 @@ export const clientApi = createApi({
   reducerPath: "clientApi",
   baseQuery: createAxiosBaseQuery(clientApiInstance, "client"),
   endpoints: () => ({}),
+  tagTypes: ["Cars", "Rental", "Me"],
 });
 
 export const companyApi = createApi({
   reducerPath: "companyApi",
   baseQuery: createAxiosBaseQuery(companyApiInstance, "company"),
   endpoints: () => ({}),
+  tagTypes: ["Cars", "Rental", "Me"],
 });

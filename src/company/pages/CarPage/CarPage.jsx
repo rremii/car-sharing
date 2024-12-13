@@ -4,13 +4,18 @@ import { useParams } from "react-router-dom";
 import { useRemoveCarMutation } from "../../api/carApi";
 import { useToast } from "../../../shared/toast";
 import { useNavigate } from "react-router-dom";
+import { useGetCarReviewsQuery } from "../../api/reviewApi";
 
 export const CarPage = () => {
-  const carId = useParams().id;
+  const carId = +useParams().id;
   const navigate = useNavigate();
   const { openToast } = useToast();
 
   const { data: car } = useGetCarByIdQuery(carId);
+  const { data: reviews } = useGetCarReviewsQuery(
+    { carId: carId },
+    { skip: !carId }
+  );
 
   const [removeCar] = useRemoveCarMutation();
 
@@ -32,25 +37,11 @@ export const CarPage = () => {
       });
   };
 
-  const reviews = [
-    {
-      id: 1,
-      comment: "comment",
-      carId: 1,
-      userId: 1,
-    },
-    {
-      id: 2,
-      comment: "comment",
-      carId: 1,
-      userId: 1,
-    },
-  ];
-
   return (
     <>
       <Header />
       <div>
+        <h2>Car info</h2>
         <h2>{car?.brand}</h2>
         <p>{car?.model}</p>
         <p>{car?.lat}</p>
@@ -58,7 +49,8 @@ export const CarPage = () => {
         <button onClick={onDelete}>delete</button>
       </div>
       <div>
-        {reviews.map((review) => (
+        <h3>Reviews</h3>
+        {reviews?.map((review) => (
           <div key={review.id}>
             <p>{review.comment}</p>
           </div>

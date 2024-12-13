@@ -1,31 +1,30 @@
 import { NavLink } from "react-router-dom";
 import { Header } from "./../../components/Header/Header";
+import { useGetMyRentalsQuery } from "./../../api/rentalApi";
 
 export const RentListPage = () => {
-  const rents = [
-    {
-      id: 0,
-      carId: 0,
-      clientId: 0,
-      cost: 20,
-      createdAt: new Date(),
-      status: "active",
-      time: 4,
-    },
-  ];
+  const { data: rentals } = useGetMyRentalsQuery();
 
   return (
     <>
       <Header />
       <main>
-        {rents.map((rent) => {
+        {rentals?.map((rent) => {
           return (
             <NavLink to={"/client/rent/" + rent.id} key={rent.id}>
-              <span>cost</span>
-              <span>{rent.cost}</span>
+              <div>
+                <span>cost</span>
+                <span>{rent.cost}</span>
+              </div>
+              <div>
+                <span>status</span>
+                <span>{rent.status}</span>
+              </div>
 
-              <span>status</span>
-              <span>{rent.status}</span>
+              <div>
+                <span>ending time</span>
+                <span>{rent.time}</span>
+              </div>
             </NavLink>
           );
         })}

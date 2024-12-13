@@ -13,7 +13,6 @@ export const CarCell = ({ id, brand, model, lat, lng, companyId }) => {
       <p>{model}</p>
       <p>{lat}</p>
       <p>{lng}</p>
-      <p>{lng}</p>
     </div>
   );
 };

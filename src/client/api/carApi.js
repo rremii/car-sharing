@@ -8,6 +8,7 @@ const carApi = clientApi.injectEndpoints({
         method: "GET",
         prefix: "/company",
       }),
+      providesTags: ["Cars"],
     }),
   }),
 });
