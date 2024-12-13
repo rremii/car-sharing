@@ -1,15 +1,19 @@
 const Review = require("../models/review.model");
 
 class ReviewService {
+  constructor() {
+    this.Review = Review;
+  }
+
   async getByCar(carId) {
-    const reviews = await Review.findAll({
+    const reviews = await this.Review.findAll({
       where: { carId },
     });
     return reviews;
   }
 
   async create({ comment, carId, clientId }) {
-    const review = await new Review();
+    const review = await new this.Review();
     review.comment = comment;
     review.carId = carId;
     review.clientId = clientId;
@@ -20,7 +24,7 @@ class ReviewService {
   }
 
   async remove(id) {
-    const review = await Review.findByPk(id);
+    const review = await this.Review.findByPk(id);
 
     if (!review) {
       throw new Error("Review not found");
@@ -29,4 +33,4 @@ class ReviewService {
     return await review.destroy();
   }
 }
-module.exports = new ReviewService();
+module.exports = new ReviewService(Review);

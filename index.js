@@ -10,6 +10,7 @@ const clientRouter = require("./client/routes");
 const companyRouter = require("./company/routes");
 const errorMiddleware = require("./error-middleware");
 const cors = require("cors");
+const loggerMiddleware = require("./logger-middleware");
 
 const app = express();
 const port = 3000;
@@ -21,6 +22,7 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(passport.initialize());
+app.use(loggerMiddleware);
 app.use("/client", clientRouter);
 app.use("/company", companyRouter);
 app.use(errorMiddleware);
