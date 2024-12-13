@@ -1,4 +1,5 @@
 const Rental = require("../models/rental.model");
+const ApiError = require("../../api-error");
 
 class RentalService {
   async create({ carId, clientId, time, cost }) {
@@ -11,6 +12,22 @@ class RentalService {
     const savedRental = await rental.save();
 
     return savedRental;
+  }
+
+  async getById(id) {
+    const rental = await Rental.findByPk(id);
+    if (!rental) {
+      throw new ApiError("Rental not found", 404);
+    }
+    return rental;
+  }
+  async removeRental(id) {
+    const rental = await Rental.findByPk(id);
+    if (!rental) {
+      throw new ApiError("Rental not found", 404);
+    }
+
+    return await rental.destroy();
   }
 
   async finish(id) {

@@ -1,3 +1,5 @@
+const Review = require("../models/review.model");
+
 class ReviewService {
   async getByCar(carId) {
     const reviews = await Review.findAll({
@@ -16,4 +18,15 @@ class ReviewService {
 
     return savedReview;
   }
+
+  async remove(id) {
+    const review = await Review.findByPk(id);
+
+    if (!review) {
+      throw new Error("Review not found");
+    }
+
+    return await review.destroy();
+  }
 }
+module.exports = new ReviewService();

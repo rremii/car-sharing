@@ -12,12 +12,15 @@ router.post("/send-code", authController.sendCode);
 router.get("/me", authMiddleware, clientController.getMe);
 
 router.get(
-  "/reviews/car/:id",
+  "/car/:id/reviews",
   authMiddleware,
   clientController.getReviewsByCar
 );
 router.post("/me/reviews", authMiddleware, clientController.createReview);
+router.delete("/me/reviews/:id", authMiddleware, clientController.removeReview);
 
+router.get("/rentals/:id", authMiddleware, clientController.getRentalById);
+router.delete("/me/rentals/:id", authMiddleware, clientController.removeRental);
 router.get("/me/rentals", authMiddleware, clientController.getMyRentals);
 router.patch(
   "/me/rentals/:id/finish",

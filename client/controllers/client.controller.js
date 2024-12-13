@@ -54,6 +54,21 @@ class ClientController {
     }
   }
 
+  async removeReview(req, res, next) {
+    try {
+      const id = req?.params?.id;
+      if (!id) {
+        return res.status(404).send({ message: "Review not found" });
+      }
+
+      await reviewService.remove(id);
+
+      return res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getMyRentals(req, res, next) {
     try {
       const id = req?.user.id;
@@ -68,6 +83,36 @@ class ClientController {
       next(error);
     }
   }
+
+  async getRentalById(req, res, next) {
+    try {
+      const id = req?.params?.id;
+      if (!id) {
+        return res.status(404).send({ message: "Rental not found" });
+      }
+
+      const rental = await rentalService.getById(id);
+
+      return res.status(200).send(rental);
+    } catch (error) {
+      next(error);
+    }
+  }
+  async removeRental(req, res, next) {
+    try {
+      const id = req?.params?.id;
+      if (!id) {
+        return res.status(404).send({ message: "Rental not found" });
+      }
+
+      await rentalService.removeRental(id);
+
+      return res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async finishRental(req, res, next) {
     try {
       const id = req?.params?.id;
