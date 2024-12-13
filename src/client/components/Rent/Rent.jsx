@@ -21,7 +21,7 @@ const validatingSchema = yup
   .required();
 
 export const Rent = () => {
-  const { id: rentId } = useParams();
+  const rentId = +useParams().id;
   const navigate = useNavigate();
   const { data: me } = useGetMeQuery();
   const { openToast } = useToast();
@@ -29,7 +29,9 @@ export const Rent = () => {
   const { data: rent } = useGetRentByIdQuery(+rentId);
   const { data: reviews } = useGetCarReviewsQuery(
     { carId: rent?.carId },
-    { skip: !rent?.carId }
+    {
+      skip: !rent?.carId,
+    }
   );
 
   const {

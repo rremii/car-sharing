@@ -5,6 +5,13 @@ import { useDispatch } from "react-redux";
 import { setIsLoggedIn } from "../../../client/model/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../api/authApi";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const schema = yup.object().shape({
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+});
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -17,7 +24,9 @@ export const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   useEffect(() => {
     if (errors.email)

@@ -10,7 +10,9 @@ import { useGetAllCarsQuery } from "../../api/carApi";
 export const Map = () => {
   const navigate = useNavigate();
 
-  const { data: cars } = useGetAllCarsQuery();
+  const { data: cars } = useGetAllCarsQuery(undefined, {
+    refetchOnFocus: true,
+  });
 
   const [location, setLocation] = useState({
     lat: 0,
