@@ -25,34 +25,236 @@ router.post(
   authController.sendCode
 );
 
-router.get("/me", authMiddleware, clientController.getMe);
+router.get(
+  "/me",
+  authMiddleware,
+  clientController.getMe.bind(clientController)
+);
 
 router.get(
   "/car/:id/reviews",
   authMiddleware,
-  clientController.getReviewsByCar
+  clientController.getReviewsByCar.bind(clientController)
 );
 router.post(
   "/me/reviews",
   validator.body(reviewSchemas.createReviewSchema),
   authMiddleware,
-  clientController.createReview
+  clientController.createReview.bind(clientController)
 );
-router.delete("/me/reviews/:id", authMiddleware, clientController.removeReview);
+router.delete(
+  "/me/reviews/:id",
+  authMiddleware,
+  clientController.removeReview.bind(clientController)
+);
 
-router.get("/rentals/:id", authMiddleware, clientController.getRentalById);
-router.delete("/me/rentals/:id", authMiddleware, clientController.removeRental);
-router.get("/me/rentals", authMiddleware, clientController.getMyRentals);
+router.get(
+  "/rentals/:id",
+  authMiddleware,
+  clientController.getRentalById.bind(clientController)
+);
+router.delete(
+  "/me/rentals/:id",
+  authMiddleware,
+  clientController.removeRental.bind(clientController)
+);
+router.get(
+  "/me/rentals",
+  authMiddleware,
+  clientController.getMyRentals.bind(clientController)
+);
 router.patch(
   "/me/rentals/:id/finish",
   authMiddleware,
-  clientController.finishRental
+  clientController.finishRental.bind(clientController)
 );
 router.post(
   "/me/rentals",
   validator.body(rentalSchemas.createRentalSchema),
   authMiddleware,
-  clientController.createRental
+  clientController.createRental.bind(clientController)
 );
 
 module.exports = router;
+
+/**
+ * @swagger
+ * tags:
+ *   name: Client
+ *   description: The Client API
+ * /register:
+ *   post:
+ *     summary: Register a new user
+ *     description: Register a new user
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Register'
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TokenResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ * components:
+ *   schemas:
+ *     TokenResponse:
+ *       type: object
+ *       required:
+ *         - token
+ *       properties:
+ *         token:
+ *           type: string
+ *     Register:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *         - name
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: user@example.com
+ *         password:
+ *           type: string
+ *           format: password
+ *           example: 123456
+ *         name:
+ *           type: string
+ *           example: John Doe
+ *     Login:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: user@example.com
+ *         password:
+ *           type: string
+ *           format: password
+ *           example: 123456
+ *     Error:
+ *       type: object
+ *       required:
+ *         - message
+ *       properties:
+ *         message:
+ *           type: string
+ *           example: Invalid email or password
+ * /login:
+ *   post:
+ *     summary: Login a user
+ *     description: Login a user
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Login'
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TokenResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ * /refresh:
+ *     post:
+ *       summary: Refresh a user token
+ *       description: Refresh a user token
+ *       requestBody:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TokenResponse'
+ *       responses:
+ *         200:
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/TokenResponse'
+ *         400:
+ *           description: Bad request
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Error'
+ *         401:
+ *           description: Unauthorized
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Error'
+ *         403:
+ *           description: Forbidden
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Error'
+ *         404:
+ *           description: Not found
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Error'
+ *         500:
+ *           description: Internal server error
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Error'
+ */

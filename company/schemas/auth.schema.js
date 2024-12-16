@@ -13,7 +13,7 @@ const loginSchema = Joi.object({
 });
 
 const codeSchema = Joi.object({
-  code: Joi.string().required(),
+  email: Joi.string().email().required(),
 });
 
 module.exports = {

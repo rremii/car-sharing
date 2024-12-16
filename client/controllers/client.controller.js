@@ -30,7 +30,7 @@ class ClientController {
         return res.status(404).send({ message: "Car not found" });
       }
 
-      const reviews = await reviewService.getByCar(id);
+      const reviews = await this.reviewService.getByCar(id);
 
       return res.status(200).send(reviews);
     } catch (error) {
@@ -47,7 +47,8 @@ class ClientController {
         return res.status(400).send({ message: "Missing required fields" });
       }
 
-      const review = await reviewService.create({
+      console.log(this);
+      const review = await this.reviewService.create({
         comment,
         carId,
         clientId,
@@ -66,7 +67,7 @@ class ClientController {
         return res.status(404).send({ message: "Review not found" });
       }
 
-      await reviewService.remove(id);
+      await this.reviewService.remove(id);
 
       return res.status(204).send();
     } catch (error) {

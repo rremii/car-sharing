@@ -11,9 +11,34 @@ const companyRouter = require("./company/routes");
 const errorMiddleware = require("./error-middleware");
 const cors = require("cors");
 const loggerMiddleware = require("./logger-middleware");
+const swaggerJsdoc = require("swagger-jsdoc"),
+  swaggerUi = require("swagger-ui-express");
 
 const app = express();
 const port = 3000;
+
+const options = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "Car sharing app",
+      version: "0.1.0",
+      description: "Thats a project for an exam",
+      license: {
+        name: "No License",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+      },
+    ],
+  },
+  apis: ["./client/routes.js", "./company/routes.js"],
+};
+
+const specs = swaggerJsdoc(options);
 
 app.use(
   cors({
@@ -26,6 +51,11 @@ app.use(loggerMiddleware);
 app.use("/client", clientRouter);
 app.use("/company", companyRouter);
 app.use(errorMiddleware);
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { explorer: true })
+);
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
