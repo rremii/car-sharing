@@ -2,6 +2,7 @@ import { useToast } from "../../../shared/toast";
 import { useCreateCarMutation } from "../../../company/api/carApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { clientApi } from "../../../shared/store/api";
 
 const brandsWithModels = {
   Audi: ["A3", "A4", "A5", "A6", "Q5", "Q7", "S4", "S5", "S6", "S8", "TT"],
@@ -34,6 +35,7 @@ export const InfoStep = ({ goBack, location }) => {
           content: "Car created",
           type: "success",
         });
+        clientApi.util.invalidateTags(["Cars"]);
       })
       .catch((error) => {
         openToast({
