@@ -1,7 +1,5 @@
-const Review = require("../models/review.model");
-
 class ReviewService {
-  constructor() {
+  constructor(Review) {
     this.Review = Review;
   }
 
@@ -33,4 +31,4 @@ class ReviewService {
     return await review.destroy();
   }
 }
-module.exports = new ReviewService(Review);
+module.exports = ReviewService;

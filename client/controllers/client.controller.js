@@ -1,8 +1,13 @@
 const clientService = require("../services/client.service");
-const reviewService = require("../services/review.service");
+const ReviewService = require("../services/review.service");
 const rentalService = require("../services/rental.service");
+const Review = require("../models/review.model");
 
 class ClientController {
+  constructor() {
+    this.reviewService = new ReviewService(Review);
+  }
+
   async getMe(req, res, next) {
     try {
       const email = req?.user.email;

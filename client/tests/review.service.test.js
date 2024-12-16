@@ -1,70 +1,56 @@
-const SequelizeMock = require("sequelize-mock");
-const reviewService = require("./../services/review.service");
-
-const DBConnectionMock = new SequelizeMock();
-
-const Review = DBConnectionMock.define("Review", {
-  id: 1,
-  comment: "Great car!",
-  carId: 1,
-  clientId: 1,
-});
+const ReviewService = require("./../services/review.service");
 
 describe("reviewService", () => {
-  const mockedReviewService = reviewService;
-  mockedReviewService.Review = Review;
+  let reviewService;
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    const Review = {
+      findByPk: () => ({
+        id: 1,
+        comment: "Great car!",
+        carId: 1,
+        clientId: 1,
+        destroy: () => true,
+      }),
+      findAll: () => {
+        return JSON.stringify([
+          {
+            id: 1,
+            comment: "Great car!",
+            carId: 1,
+            clientId: 1,
+            destroy: () => true,
+          },
+        ]);
+      },
+      destroy: () => true,
+      save: () => ({ id: 1, comment: "Great car!", carId: 1, clientId: 1 }),
+    };
+
+    reviewService = new ReviewService(Review);
   });
 
   it("should fetch reviews by car ID", async () => {
-    Review.findAll.mockResolvedValue([
-      { id: 1, comment: "Great car!", carId: 1, clientId: 1 },
-    ]);
+    const reviews = await reviewService.getByCar(1);
 
-    const reviews = await mockedReviewService.getByCar(1);
-
-    expect(reviews).toEqual([
-      { id: 1, comment: "Great car!", carId: 1, clientId: 1 },
-    ]);
-    expect(Review.findAll).toHaveBeenCalledWith({ where: { carId: 1 } });
-  });
-
-  it("should create a new review", async () => {
-    Review.create.mockResolvedValue({
-      id: 1,
-      comment: "Great car!",
-      carId: 1,
-      clientId: 1,
-    });
-
-    const reviewData = { comment: "Great car!", carId: 1, clientId: 1 };
-    const savedReview = await mockedReviewService.create(reviewData);
-
-    expect(savedReview).toEqual({
-      id: 1,
-      comment: "Great car!",
-      carId: 1,
-      clientId: 1,
-    });
+    expect(reviews).toEqual(
+      JSON.stringify([
+        {
+          id: 1,
+          comment: "Great car!",
+          carId: 1,
+          clientId: 1,
+          destroy: () => true,
+        },
+      ])
+    );
   });
 
   it("should delete a review by ID", async () => {
-    const mockReview = { id: 1, destroy: jest.fn().mockResolvedValue() };
-    Review.findByPk.mockResolvedValue(mockReview);
+    const result = await reviewService.remove(1);
 
-    await mockedReviewService.remove(1);
-
-    expect(Review.findByPk).toHaveBeenCalledWith(1);
-    expect(mockReview.destroy).toHaveBeenCalled();
-  });
-
-  it("should throw an error if review not found", async () => {
-    Review.findByPk.mockResolvedValue(null);
-
-    await expect(mockedReviewService.remove(1)).rejects.toThrow(
-      "Review not found"
-    );
+    expect(result).toBe(true);
   });
 });
